@@ -2,22 +2,23 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 )
 
 func main() {
+	const port = "8080"
+
 	fmt.Println("creating http server...")
 
-	var serveMux *http.ServeMux = http.NewServeMux()
-
+	mux := http.NewServeMux()
+	mux.Handle("/", http.FileServer(http.Dir(".")))
 	server := &http.Server{
-		Addr:    ":8080",
-		Handler: serveMux,
+		Addr:    ":" + port,
+		Handler: mux,
 	}
-	err := server.ListenAndServe()
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
+
+	fmt.Printf("serving on port: %s", port)
+	log.Fatal(server.ListenAndServe())
 
 }
